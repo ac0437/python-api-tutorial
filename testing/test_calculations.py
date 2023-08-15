@@ -2,6 +2,16 @@ from calculations import add, subtract, multiply, divide, BankAccount
 import pytest
 
 
+@pytest.fixture
+def zero_bank_account():
+    return BankAccount()
+
+
+@pytest.fixture
+def init_val_bank_account():
+    return BankAccount(10)
+
+
 @pytest.mark.parametrize("num1, num2, expected", [
     (2, 3, 5),
     (0, 4, 4),
@@ -57,3 +67,11 @@ def test_bankaccount():
     assert account2.balance == 11
     account2.withdraw(10)
     assert account2.balance == 1
+
+
+def test_zero_bank_account(zero_bank_account):
+    assert zero_bank_account.balance == 0
+
+
+def test_init_val_bank_account(init_val_bank_account):
+    assert init_val_bank_account.balance == 10
