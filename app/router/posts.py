@@ -12,10 +12,13 @@ router = APIRouter(
 
 
 @router.get('/', response_model=List[schema.PostOut])
-def get_post(db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user), limit: int = 1, skip: int = 0, term: Optional[str] = ""):
+def get_post(db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, term: Optional[str] = ""):
     post = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
         models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(term)).limit(limit).offset(
         skip).all()
+    if post == None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Post Not Found.")
     return post
 
 
@@ -64,10 +67,10 @@ def update_post(post_id: int, post: schema.PostCreate, db: Session = Depends(get
     updated_post = db.query(models.Post).filter(
         models.Post.id == post_id)
     updated_post_instance = updated_post.first()
-    if updated_post == None:
+    if updated_post_instance == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Post Not Found.")
-    if updated_post_instance.owner_id == user_id.id:
+    if updated_post_instance.owner_id != None and updated_post_instance.owner_id == user_id.id:
         updated_post.update(post.dict())
         db.commit()
     else:
