@@ -11,6 +11,16 @@ on:
       - 'main'
 jobs:
   first_job:
+    env:
+      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+      SQLALCHEMY_DATABASE_URL: ${{secrets.SQLALCHEMY_DATABASE_URL}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCES_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXIPIRE_MINUTES }}
     runs-on: ubuntu-latest
     steps:
       - name: pulling git repo
